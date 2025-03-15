@@ -1,60 +1,85 @@
-# Chirpy Starter
+# Cybersecurity Portfolio
+Portfolio showcasing cybersecurity projects, insights, and learnings
 
-[![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
-[![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
+## Table of Contents  
+- [About This Portfolio](#about-this-portfolio)  
+- [Portfolio Structure](#portfolio-structure)
+- [Projects](#projects)  
+- [Installation & Setup](#installation--setup)  
+- [Skills & Technologies Used](#skills--technologies-used)  
 
-When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders
-`_data`, `_layouts`, `_includes`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file
-from the theme's gem. If you have ever installed this theme gem, you can use the command
-`bundle info --path jekyll-theme-chirpy` to locate these files.
+## About This Portfolio  
+This portfolio contains my cybersecurity-related projects, including:  
+- **Network Traffic Analysis Toolkit** – A Python & Bash toolset for capturing, analyzing, detecting, and visualizing network traffic anomalies.  
+- **Security Research & Learning Notes** – Research articles and documentation on cybersecurity techniques, threat intelligence, and system vulnerabilities.  
 
-The Jekyll team claims that this is to leave the ball in the user’s court, but this also results in users not being
-able to enjoy the out-of-the-box experience when using feature-rich themes.
+These projects demonstrate my ability to work with **packet analysis (PCAPs), network monitoring, security scripting, and automated threat detection.**  
 
-To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your
-Jekyll site. The following is a list of targets:
-
-```shell
-.
-├── _config.yml
-├── _plugins
-├── _tabs
-└── index.html
+## Portfolio Structure
+```
+cybersecurity-portfolio/
+├── _config.yml                             # Site settings
+├── index.md                                # Homepage
+├── pages/                                  # Custom pages
+│   ├── projects.md                         # Projects page
+│   ├── blog.md                             # Blog page
+│   ├── contact.md                          # Contact page
+│   └── writeup.md                          # Cybersecurity write-ups
+|   
+├── posts/                                  # Blog posts (if needed)
+│   ├── 2025-03-12-example.md
+│   └── 2025-03-10-pcap-analysis.md
+|   
+├── writeups/                               # Cybersecurity technical write-ups
+│   ├── example.md
+│   └── pcap-analysis.md
+|
+├── projects/                               # Project details
+│   └── network-traffic-analysis-tool/  
+│       ├── README.md                       # Project write-up
+│       ├── src/                            # Python scripts for processing
+|       ├── scripts/                        # Bash scripts 
+|       ├── docs/                           # Documentation and reports
+|       ├── data/                           # Folder (PCAP files - from both web scrapping/downloaded)
+|       └── results/                        # All analysed results saved within 
+|           └── pcap1
+|               ├── downloads_pcap1/        # Downlable content within payload saved within 
+|               ├── payload_pcap1.txt       # Payload extracted
+|               ├── pcap1.csv               # Packet Data extracted
+|               ├── Malicious Traffic/      # Results from Detector saved within (a csv and text summary)
+|               └── Visuals/                # Results from Visualiser
+├── LICENSE                                 # Project license
+└── README.md                               # Portfolio overview
 ```
 
-To save you time, and also in case you lose some files while copying, we extract those files/configurations of the
-latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
+## Projects  
+### **Network Traffic Analysis Toolkit**  
+**Description:**  
+A set of Python and Bash scripts for **capturing, analyzing, detecting, and visualizing** network traffic patterns and security threats from PCAP files.  
 
-## Prerequisites
+**Key Features:**  
+- Capture real-time network traffic using `tcpdump`.  
+- Analyze `.pcap` files to extract insights.  
+- Detect suspicious patterns using Python-based anomaly detection.  
+- Visualize results using Matplotlib and Pandas.  
 
-Follow the instructions in the [Jekyll Docs](https://jekyllrb.com/docs/installation/) to complete the installation of
-the basic environment. [Git](https://git-scm.com/) also needs to be installed.
+**Quick Links:**  
+1. **[View My Projects](./pages/projects.md)**  
+2. **[Read My Blog](./pages/blog.md)**  
+3. **[Contact Me](./pages/contact.md)**  
 
-## Installation
 
-Sign in to GitHub and [**use this template**][use-template] to generate a brand new repository and name it
-`USERNAME.github.io`, where `USERNAME` represents your GitHub username.
+## **Installation & Setup:** 
+This portfolio is built using Markdown and GitHub Pages
 
-Then clone it to your local machine and run:
-
-```console
-$ bundle
+### To view the portfolio locally:
+```bash
+git clone https://github.com/yourusername/cybersecurity-portfolio.git
+cd cybersecurity-portfolio
 ```
 
-## Usage
-
-Please see the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy#documentation).
-
-## Contributing
-
-This repository is automatically updated with new releases from the theme repository. If you encounter any issues or want to contribute to its improvement, please visit the [theme repository][chirpy] to provide feedback.
-
-## License
-
-This work is published under [MIT][mit] License.
-
-[gem]: https://rubygems.org/gems/jekyll-theme-chirpy
-[chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
-[use-template]: https://github.com/cotes2020/chirpy-starter/generate
-[CD]: https://en.wikipedia.org/wiki/Continuous_deployment
-[mit]: https://github.com/cotes2020/chirpy-starter/blob/master/LICENSE
+## Skills & Technologies Used  
+- **Programming & Scripting:** Python, Bash, PowerShell  
+- **Networking & Security:** Wireshark, Tcpdump, Scapy, pyshark
+- **Data Analysis & Visualization:** Pandas, Matplotlib  
+  
