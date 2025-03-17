@@ -3,6 +3,7 @@ title: "Traffic Network Analysis Tool"
 date: 2025-03-16 00:00:00 +0800
 categories: [Projects]
 tags: [Traffic Network Analysis Tool]
+permalink: /traffic-network-analysis-tool/
 ---
 
 # Introduction
@@ -10,10 +11,10 @@ tags: [Traffic Network Analysis Tool]
 In the rapidly evolving landscape of cybersecurity, network traffic analysis is a crucial skill for identifying malicious activities, detecting cyber threats, and securing digital environments. Attackers continuously exploit network vulnerabilities, making it imperative to have automated tools that can analyze, detect, and visualize network activity efficiently.
 
 This project focuses on developing a comprehensive, automated network traffic analysis toolkit that:
-	•	Captures live network traffic using TCPDump for monitoring and internet scraping.
-	•	Processes PCAP (Packet Capture) files to extract protocols, MAC address vendors, payloads, and downloadable files.
-	•	Detects malicious traffic based on packet size, suspicious payloads, and attack target ports.
-	•	Visualizes network activity to provide insights into network behavior, threats, and anomalies.
+•	Captures live network traffic using TCPDump for monitoring and internet scraping.
+•	Processes PCAP (Packet Capture) files to extract protocols, MAC address vendors, payloads, and downloadable files.
+•	Detects malicious traffic based on packet size, suspicious payloads, and attack target ports.
+•	Visualizes network activity to provide insights into network behavior, threats, and anomalies.
 
 By automating these processes, the toolkit enhances cybersecurity investigations and reduces manual effort while improving detection efficiency and accuracy.
 
@@ -35,9 +36,9 @@ This toolkit serves as a practical cybersecurity solution for security analysts,
 To analyze network traffic in real time, this project leverages TCPDump for capturing packets. The script capture_traffic.sh automates the process of capturing network packets and saving them in a structured format for further analysis.
 
 ## Key Features:
-	•	Captures network traffic in real-time using tcpdump
-	•	Saves captured packets to a PCAP file for offline analysis.
-	•	Supports long-duration monitoring.
+•	Captures network traffic in real-time using tcpdump
+•	Saves captured packets to a PCAP file for offline analysis.
+•	Supports long-duration monitoring.
 
 ## Snippet of Command for Capturing HTTP traffic
 ```bash
@@ -63,9 +64,9 @@ This command captures HTTP traffic and writes it to a PCAP file for further anay
 The run_pcap_analysis.sh script automates the execution of the entire analysis pipeline. 
 
 ## Workflow:
-	1.	Runs the analyzer module to extract key network details.
-	2.	Executes the detector module to identify suspicious traffic.
-	3.	Generates visualizations for network activity and security alerts.
+1.	Runs the analyzer module to extract key network details.
+2.	Executes the detector module to identify suspicious traffic.
+3.	Generates visualizations for network activity and security alerts.
 
 ## Snippet of automation workflow in run_pcap_analysis.sh
 ```bash
@@ -93,18 +94,18 @@ By automating the network analysis process, this script significantly reduces ma
 # 3.PCAP Analysis: Extracting Network Details
 
 The analyser.py module processes PCAP files and extracts network metadata, such as:
-	•	Packet headers (source/destination IPs, MAC addresses).
-	•	Protocol classification (HTTP, SSH, DNS, SMB).
-	•	Payload extraction (to detect malicious content).
-	•	MAC address vendor identification (using Wireshark’s OUI database).
-	•	Reassembling downloadable files (PDFs, ZIPs, images).
+•	Packet headers (source/destination IPs, MAC addresses).
+•	Protocol classification (HTTP, SSH, DNS, SMB).
+•	Payload extraction (to detect malicious content).
+•	MAC address vendor identification (using Wireshark’s OUI database).
+•	Reassembling downloadable files (PDFs, ZIPs, images).
 
 ## How It Works
-	1.	Reads packets from a PCAP file using Scapy and PyShark.
-	2.	Extracts relevant fields (IP, MAC, protocol, payload, dport, sport).
-	3.	Identifies MAC address vendors to map devices.
-	4.	Detects and reconstructs downloadable files based on magic numbers. (Extracted and Downloaded)
-	5.	Saves extracted data to a structured CSV format.
+1.	Reads packets from a PCAP file using Scapy and PyShark.
+2.	Extracts relevant fields (IP, MAC, protocol, payload, dport, sport).
+3.	Identifies MAC address vendors to map devices.
+4.	Detects and reconstructs downloadable files based on magic numbers. (Extracted and Downloaded)
+5.	Saves extracted data to a structured CSV format.
 
 ## Example CSV output
 
@@ -116,15 +117,18 @@ The analyser.py module processes PCAP files and extracts network metadata, such 
 
 The extracted data serves as input for further malicious traffic detection.
 
+**[Read More...](https://leeannn01.github.io/analyser/)**
+ 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/analyser)** 
 ---
 
 # 4. Detecting Malicious Traffic
 
 The detector.py module applies security heuristics to detect suspicious network activity, such as:
-	•	Suspicious ports (SSH, RDP, SMB).
-	•	Large packet sizes (potential DDoS attacks or data exfiltration).
-	•	Payload analysis for malicious commands (e.g., wget, powershell).
-	•	Traffic direction classification (inbound, outbound, internal, external).
+•	Suspicious ports (SSH, RDP, SMB).
+•	Large packet sizes (potential DDoS attacks or data exfiltration).
+•	Payload analysis for malicious commands (e.g., wget, powershell).
+•	Traffic direction classification (inbound, outbound, internal, external).
 
 ## Example Heuristic: Large Packet Detection
 ```python
@@ -142,6 +146,10 @@ df.loc[df["length"] > LARGE_PACKET_SIZE, "suspicious_reason"] += "Large packet s
 | 10:02:10 | 192.168.1.2 | 192.168.1.1 | Suspicious payload detected| 
 
 By flagging malicious packet, this module helps security teams respond to potential threats quickly.
+
+**[Read More...](https://leeannn01.github.io/detector/)**
+ 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/detector)** 
 
 ---
 
@@ -167,6 +175,10 @@ plt.title("Suspicious Activity Heatmap (Alerts Over Time)")
 ```
 
 This visualization helps identify attack patterns and peak threat times.
+
+**[Read More...](https://leeannn01.github.io/visualiser/)**
+ 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/visualiser)** 
 
 ---
 

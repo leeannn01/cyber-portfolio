@@ -193,6 +193,41 @@ def extract_packet_data(pcap_file, output_folder):
                 if packet.haslayer(UDP) or (packet.haslayer(TCP) and int(packet[TCP].sport) > 49152):
                     protocol = "UDP"
 
+                # For TCP packets, use port-based heuristics.
+                elif packet.haslayer(TCP):
+                    tcp_sport = packet[TCP].sport
+                    tcp_dport = packet[TCP].dport
+                    if tcp_sport == 80 or tcp_dport == 80:
+                        protocol = "HTTP"
+                    elif tcp_sport == 443 or tcp_dport == 443:
+                        protocol = "HTTPS"
+                    elif tcp_sport == 25 or tcp_dport == 25:
+                        protocol = "SMTP"
+                    elif tcp_sport == 110 or tcp_dport == 110:
+                        protocol = "POP3"
+                    elif tcp_sport == 143 or tcp_dport == 143:
+                        protocol = "IMAP"
+                    elif tcp_sport == 21 or tcp_dport == 21:
+                        protocol = "FTP"
+                    elif tcp_sport == 22 or tcp_dport == 22:
+                        protocol = "SSH"
+                    else:
+                        # If no port-based rule applies, attempt payload analysis for file signatures.
+                        if packet.haslayer(Raw):
+                            raw_payload = bytes(packet[Raw].load)
+                            for signature, (extension, eof_marker) in FILE_SIGNATURES.items():
+                                if raw_payload.startswith(signature):
+                                    protocol = extension.upper()
+                                    break
+                else:
+                    # For non-TCP/UDP packets, try payload analysis if available.
+                    if packet.haslayer(Raw):
+                        raw_payload = bytes(packet[Raw].load)
+                        for signature, (extension, eof_marker) in FILE_SIGNATURES.items():
+                            if raw_payload.startswith(signature):
+                                protocol = extension.upper()
+                                break
+                    
             packet_info["protocol"] = protocol
             detected_protocols.add(protocol)
 
