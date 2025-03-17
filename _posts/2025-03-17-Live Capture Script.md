@@ -2,6 +2,7 @@
 title: "Live Capture Script"
 date: 2025-03-17 10:00:00 +0800
 categories: [Projects]
+permalink: /live-capture-script/
 tags: [Traffic Network Analysis Tool]
 ---
 
