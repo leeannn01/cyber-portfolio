@@ -52,8 +52,9 @@ sudo tcpdump -i any -w $PCAP_FILE -G $CAPTURE_DURATION -W 1
 
 This command captures HTTP traffic and writes it to a PCAP file for further anaysis.
 
-**[Read More...] (https://leeannn01.github.io/live-capture-script/)**
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/097ea6057d9f1f24f43540b33da77a963c142034/projects/network-traffic-analysis-tool/scripts/capture_traffic.sh)** 
+**[Read More...](https://leeannn01.github.io/live-capture-script/)**
+ 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/scripts/capture_traffic.sh)** 
 
 ---
 
