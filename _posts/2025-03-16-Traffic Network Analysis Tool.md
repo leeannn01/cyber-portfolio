@@ -119,7 +119,7 @@ The extracted data serves as input for further malicious traffic detection.
 
 **[Read More...](https://leeannn01.github.io/analyser/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/analyser)** 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/analyser.py)** 
 ---
 
 # 4. Detecting Malicious Traffic
@@ -149,7 +149,7 @@ By flagging malicious packet, this module helps security teams respond to potent
 
 **[Read More...](https://leeannn01.github.io/detector/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/detector)** 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/detector.py)** 
 
 ---
 
@@ -178,7 +178,7 @@ This visualization helps identify attack patterns and peak threat times.
 
 **[Read More...](https://leeannn01.github.io/visualiser/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/visualiser)** 
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/visualiser.py)** 
 
 ---
 
