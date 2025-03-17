@@ -187,4 +187,4 @@ All these outputs help security analysts visualize **potential threats** and **g
 - Create a bash script (`setup_visualiser.sh`) for easy setup
 
 # Appendix: Full Python Script
-For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/visualiser)
+For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/visualiser.py)

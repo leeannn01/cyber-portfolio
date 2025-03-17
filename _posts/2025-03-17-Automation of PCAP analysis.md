@@ -184,4 +184,4 @@ By automating PCAP analysis, cybersecurity professionals can focus on threat hun
 
 # Appendix: Full Bash Script
 
-For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/scripts/run-pcap-analysis)
+For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/scripts/run-pcap-analysis.sh)
