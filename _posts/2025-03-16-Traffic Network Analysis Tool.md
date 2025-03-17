@@ -52,8 +52,8 @@ sudo tcpdump -i any -w $PCAP_FILE -G $CAPTURE_DURATION -W 1
 
 This command captures HTTP traffic and writes it to a PCAP file for further anaysis.
 
-**[Read More...](/_posts/2025-03-17-Live%20Capture%20Script.md)**
-**[View script](../projects/network-traffic-analysis-tool/scripts/capture_traffic.sh)** 
+**[Read More...] (/live-capture-script/)**
+**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/097ea6057d9f1f24f43540b33da77a963c142034/projects/network-traffic-analysis-tool/scripts/capture_traffic.sh)** 
 
 ---
 
@@ -83,9 +83,6 @@ echo "Analysis complete! Results saved in results/"
 
 By automating the network analysis process, this script significantly reduces manual effort, making it efficient and scalable.
 
-**[Read More...](/_posts/2025-03-17-Automation%20of%20PCAP%20analysis.md)**
-**[View script](../projects/network-traffic-analysis-tool/scripts/run_pcap_analysis.sh)**
-
 ---
 
 # 3.PCAP Analysis: Extracting Network Details
@@ -114,9 +111,6 @@ The analyser.py module processes PCAP files and extracts network metadata, such 
 
 The extracted data serves as input for further malicious traffic detection.
 
-**[Read More...](/_posts/2025-03-17-Analyse%20Module.md)**
-**[View script](../projects/network-traffic-analysis-tool/src/analyser.py)**
-
 ---
 
 # 4. Detecting Malicious Traffic
@@ -144,9 +138,6 @@ df.loc[df["length"] > LARGE_PACKET_SIZE, "suspicious_reason"] += "Large packet s
 
 By flagging malicious packet, this module helps security teams respond to potential threats quickly.
 
-**[Read More...](/_posts/2025-03-17-Detection%20Module.md)**
-**[View script](../projects/network-traffic-analysis-tool/src/detector.py)**
-
 ---
 
 # 5. Visualising Network Activity
@@ -171,9 +162,6 @@ plt.title("Suspicious Activity Heatmap (Alerts Over Time)")
 ```
 
 This visualization helps identify attack patterns and peak threat times.
-
-**[Read More...](/_posts/2025-03-17-Visualisation%20Module.md)**
-**[View script](../projects/network-traffic-analysis-tool/src/visualiser.py)**
 
 ---
 
