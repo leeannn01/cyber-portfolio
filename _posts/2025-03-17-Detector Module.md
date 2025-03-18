@@ -188,4 +188,4 @@ The detector.py module successfully implements multiple heuristic techniques for
 - Create a bash script (`setup_detector.sh`) for easy setup
 
 # Appendix: Full Python Script
-For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/detector.py)
+For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/src/detector.py)
