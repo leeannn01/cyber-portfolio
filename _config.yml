@@ -14,7 +14,7 @@ timezone:
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Cybersecurity Profile # the main title
+title: Cybersecurity Portfolio # the main title
 
 tagline: Sharing my journey as a cyber novice # it will display as the subtitle
 
@@ -26,10 +26,10 @@ description: >- # used by seo meta and the atom feed
 url: "https://leeannn01.github.io"
 
 github:
-  username: github_username # change to your GitHub username
+  username: leeannn01 # change to your GitHub username
 
-twitter:
-  username: twitter_username # change to your Twitter username
+# twitter:
+#   username: twitter_username # change to your Twitter username
 
 social:
   # Change to your full name.
@@ -38,11 +38,11 @@ social:
   email: lannn.sg@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your Twitter homepage
-    - https://github.com/username # change to your GitHub homepage
+    # - https://twitter.com/username # change to your Twitter homepage
+    - https://github.com/leeannn01 # change to your GitHub homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    - https://www.linkedin.com/in/lee-ann/
 
 # Site Verification Settings
 webmaster_verifications:
