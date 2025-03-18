@@ -75,7 +75,7 @@ This portfolio leveraged on a chirpy-starter template to generate the blog.
 
 ### Usage and Installation
 **How to add a New Blog Post**
-1. Navigate to _/posts directory
+1. Navigate to /_posts directory **[_posts](./_post/)** 
 2. Create a new Markdown file using the format:
 ```YYYY-MM-DD-title-of-post.md```
 3. Add the required Front Matter at the beginning of the file:
@@ -95,7 +95,7 @@ git commit -m "message"
 git push origin main
 ```
   
-**[Read My Blog](./_post/)**  
+**[View My Blog](https://leeannn01.github.io/cyber-portfolio/)**  
 
 ## **Installation & Setup:** 
 This portfolio is built using Markdown and GitHub Pages (using chirpy template)

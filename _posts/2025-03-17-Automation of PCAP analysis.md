@@ -13,9 +13,9 @@ Analyzing PCAP (Packet Capture) files is a crucial task in network security and 
 To address this, the run_pcap_analysis.sh script was developed to:
 - List available PCAP files for easy selection.
 - Automate execution of key analysis scripts (`analyser.py`, `detector.py`, `visualiser.py`).
-    1. **[analyser.py](https://leeannn01.github.io/analyser/)**: Extracts key network details.
-	2. **[detector.py](https://leeannn01.github.io/detector/)**: Identifies suspicious activity.
-	3. **[visualiser.py](https://leeannn01.github.io/visualiser/)**: Generates network traffic visualizations.
+    1. **[analyser.py](https://leeannn01.github.io/cyber-portfolio/analyser/)**: Extracts key network details.
+	2. **[detector.py](https://leeannn01.github.io/cyber-portfolio/detector/)**: Identifies suspicious activity.
+	3. **[visualiser.py](https://leeannn01.github.io/cyber-portfolio/visualiser/)**: Generates network traffic visualizations.
 - Handle input errors and process multiple files efficiently.
 ß
 This report outlines the design choices, technical implementation, debugging strategies, and deployment considerations.
@@ -184,4 +184,4 @@ By automating PCAP analysis, cybersecurity professionals can focus on threat hun
 
 # Appendix: Full Bash Script
 
-For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/scripts/run-pcap-analysis.sh)
+For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/scripts/run-pcap-analysis.sh)

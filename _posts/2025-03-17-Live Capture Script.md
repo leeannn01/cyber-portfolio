@@ -188,5 +188,5 @@ This Bash script is a powerful yet lightweight solution for automated web traffi
 
 # Appendix: Full Bash Script
 
-For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/scripts/capture_traffic.sh)
+For full implementation details, visit the [GitHub Repository](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/scripts/capture_traffic.sh)
 
