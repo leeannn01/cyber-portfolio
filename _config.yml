@@ -16,7 +16,7 @@ timezone:
 
 title: Cybersecurity Portfolio # the main title
 
-tagline: Sharing my journey as a cyber novice # it will display as the subtitle
+tagline: "Learning by Doing: Projects, CTFs, and Cybersecurity Deep-Dives" # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   A collection of my cybersecurity projects, write-ups, research, and insights related to cybersecurity.
@@ -42,7 +42,7 @@ social:
     - https://github.com/leeannn01 # change to your GitHub homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    - https://www.linkedin.com/in/lee-ann/
+    - https://www.linkedin.com/in/lee-ann-/
 
 # Site Verification Settings
 webmaster_verifications:
@@ -150,7 +150,7 @@ pwa:
 paginate: 10
 
 # The base URL of your site
-baseurl: "/cyber-portfolio"
+baseurl: "/cyber-portfolio/"
 
 # ------------ The following options are not recommended to be modified ------------------
 
