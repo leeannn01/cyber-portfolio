@@ -150,7 +150,7 @@ pwa:
 paginate: 10
 
 # The base URL of your site
-baseurl: "/cyber-portfolio/"
+baseurl: "/cyber-portfolio/" #make sure base url used leading and trailing slashes (/) when you site url uses a subfolder to avoid path issue (username.github.io/project-name/)
 
 # ------------ The following options are not recommended to be modified ------------------
 
