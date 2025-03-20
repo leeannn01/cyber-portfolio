@@ -2,7 +2,7 @@
 title: "Beyond Data: How AI Can Detect Cyber Threats Without Training on Large Datasets?"
 date: 2025-03-20 18:00:00 +0800
 categories: [Technical Research]
-tags: [AI]
+tags: [AI, Cybersecurity, Threat Detection]
 permalink: /ai-in-cybersecuirity-beyond-data/
 ---
 
@@ -49,6 +49,8 @@ Instead of relying on past attack data, we can combine expert cybersecurity know
 - **Rule-Based Heuristics**: Detect known attacks (e.g., SYN floods, unusual port scans).
 - **Bayesian Networks**: Compute the probability of an anomaly based on packet size & network behavior.
 - **Adaptive Learning**: Adjust thresholds dynamically as network traffic evolves.
+
+[Read more... Bayesian Network in Cybersecurity](https://leeannn01.github.io/cyber-portfolio/bayesian-network-in-cybersecurity/)
 
 # The Hybrid AI Model: Implementing Prior-Knowledge AI
 

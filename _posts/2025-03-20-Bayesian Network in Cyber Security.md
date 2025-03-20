@@ -14,10 +14,10 @@ So how do we detect threats without labeled training data?
 The answer lies in **Bayesian Networks (BNs)**—a probabilistic approach that models uncertainty and learns dynamically.
 
 In this deep dive, we’ll cover:
-✔️ Mathematical Foundations of Bayesian Networks  
-✔️ Why BNs outperform ML-based methods for anomaly detection  
-✔️ How to implement Bayesian AI for cybersecurity  
-✔️ Benchmarking Bayesian AI vs. Traditional ML  
+- Mathematical Foundations of Bayesian Networks  
+- Why BNs outperform ML-based methods for anomaly detection  
+- How to implement Bayesian AI for cybersecurity  
+- Benchmarking Bayesian AI vs. Traditional ML  
 
 
 # The Problem with Traditional ML-Based IDS
@@ -65,7 +65,6 @@ This graphical representation allows probabilistic reasoning to determine if a t
 
 Bayesian AI uses **Bayes’ Theorem** to update probabilities dynamically:
 
-```markdown
 \[
 P(A | B) = \frac{P(B | A) P(A)}{P(B)}
 \]
@@ -89,7 +88,6 @@ P(\text{Anomaly} | \text{High Packet Size}) = \frac{0.85 \times 0.02}{0.10} = 0.
 \]
 
 **Key Takeaway**: If a packet has unusually high packet size, there is a **17% probability** that it is part of anomalous/malicious traffic.
-```
 
 **Reference:**  
 - *Probabilistic Reasoning in Intelligent Systems: Bayesian Networks and Beyond (Pearl, 1988)*  
