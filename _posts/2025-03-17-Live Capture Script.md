@@ -181,7 +181,7 @@ example.com_20250317_120000.pcap
 
 ## 6.2. Future Enhancements
 - Multi-threading: Capture multiple website concurrently.
-- Machine Learnning-Based Anomaly Detection: Apply AI models to flag suspicious.
+- Machine Learning-Based Anomaly Detection: Apply AI models to flag suspicious.
 - Threat Intelligence Integration: Compare capture traffic with known malicious indicators.
 
 This Bash script is a powerful yet lightweight solution for automated web traffic analysis, making it an essential tool for networks security investigations.
