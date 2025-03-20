@@ -2,7 +2,7 @@
 title: "Beyond Data: How AI Can Detect Cyber Threats Without Training on Large Datasets?"
 date: 2025-03-20 18:00:00 +0800
 categories: [Technical Research]
-tags: [AI, Cybersecurity, Threat Detection]
+tags: [AI]
 permalink: /ai-in-cybersecuirity-beyond-data/
 ---
 
@@ -67,7 +67,7 @@ Instead of a black-box machine learning model, we implement a transparent hybrid
 4. Bayesian Anomaly Detection – Compute probability scores for unknown threats.
 5. Adaptive Learning – Dynamically refine anomaly thresholds to reduce false positives.
 
-[Read More… Implementing Hybrid AI Detection System (Coming Soon!)]
+Read More… Implementing Hybrid AI Detection System (Coming Soon!)
 
 # Benchmark : Hybrid AI vs. Traditional ML-Based IDS
 

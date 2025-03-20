@@ -2,7 +2,7 @@
 title: "Bayesian Networks in Cybersecurity: A Deep Dive into Prior-Knowledge-Informed AI"
 date: 2025-03-20 22:00:00 +0800
 categories: [Technical Research]
-tags: [AI, Bayesian Networks, Cybersecurity, Anomaly Detection]
+tags: [AI]
 permalink: /bayesian-network-in-cybersecurity/
 ---
 
@@ -67,6 +67,7 @@ This graphical representation allows probabilistic reasoning to determine if a t
 
 Bayesian AI uses **Bayes’ Theorem** to update probabilities dynamically:
 
+```markdown
 \[
 P(A | B) = \frac{P(B | A) P(A)}{P(B)}
 \]
@@ -90,6 +91,7 @@ P(\text{Anomaly} | \text{High Packet Size}) = \frac{0.85 \times 0.02}{0.10} = 0.
 \]
 
 **Key Takeaway**: If a packet has unusually high packet size, there is a **17% probability** that it is part of anomalous/malicious traffic.
+```
 
 **Reference:**  
 - *Probabilistic Reasoning in Intelligent Systems: Bayesian Networks and Beyond (Pearl, 1988)*  
