@@ -19,8 +19,6 @@ In this deep dive, we’ll cover:
 ✔️ How to implement Bayesian AI for cybersecurity  
 ✔️ Benchmarking Bayesian AI vs. Traditional ML  
 
-[Read More… AI in Cybersecurity: Moving Beyond Data (Introductory Post)](https://leeannn01.github.io/cyber-portfolio/ai-in-cybersecuirity-beyond-data/)
-
 
 # The Problem with Traditional ML-Based IDS
 

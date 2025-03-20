@@ -50,8 +50,6 @@ Instead of relying on past attack data, we can combine expert cybersecurity know
 - **Bayesian Networks**: Compute the probability of an anomaly based on packet size & network behavior.
 - **Adaptive Learning**: Adjust thresholds dynamically as network traffic evolves.
 
-[Read More...Bayesian Network in Cybersecurity(Coming Soon!)](https://leeannn01.github.io/cyber-portfolio/bayesian-network-in-cybersecurity/) 
-
 # The Hybrid AI Model: Implementing Prior-Knowledge AI
 
 Instead of a black-box machine learning model, we implement a transparent hybrid model combining:
