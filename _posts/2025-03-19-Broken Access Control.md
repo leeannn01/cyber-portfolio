@@ -1,7 +1,7 @@
 ---
 title: "OSWAP_A01: Broken Access Control "
 date: 2025-03-19 11:00:00 +0800
-categories: [Blog, Research]
+categories: [Research]
 tags: [OSWAP]
 permalink: /oswap-broken-access-control/
 ---

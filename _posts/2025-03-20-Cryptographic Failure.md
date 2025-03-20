@@ -1,7 +1,7 @@
 ---
 title: "OSWAP_A02: Cryptographic Failure"
-date: 2025-03-19 11:00:00 +0800
-categories: [Blog, Research]
+date: 2025-03-20 11:00:00 +0800
+categories: [Research]
 tags: [OSWAP]
 permalink: /oswap-cryptographic-failure/
 ---

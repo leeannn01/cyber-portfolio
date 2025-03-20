@@ -85,9 +85,9 @@ echo "Analysis complete! Results saved in results/"
 
 By automating the network analysis process, this script significantly reduces manual effort, making it efficient and scalable.
 
-**[Read More...](https://leeannn01.github.io/automation-of-pcap-analysis/)**
+**[Read More...](https://leeannn01.github.io/cyber-portfolio/automation-of-pcap-analysis/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/scripts/run_pcap_analysis.sh)** 
+**[View script](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/scripts/run_pcap_analysis.sh)** 
 
 ---
 
@@ -117,9 +117,9 @@ The analyser.py module processes PCAP files and extracts network metadata, such 
 
 The extracted data serves as input for further malicious traffic detection.
 
-**[Read More...](https://leeannn01.github.io/analyser/)**
+**[Read More...](https://leeannn01.github.io/cyber-portfolio/analyser/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/analyser.py)** 
+**[View script](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/src/analyser.py)** 
 ---
 
 # 4. Detecting Malicious Traffic
@@ -147,9 +147,9 @@ df.loc[df["length"] > LARGE_PACKET_SIZE, "suspicious_reason"] += "Large packet s
 
 By flagging malicious packet, this module helps security teams respond to potential threats quickly.
 
-**[Read More...](https://leeannn01.github.io/detector/)**
+**[Read More...](https://leeannn01.github.io/cyber-portfolio/detector/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/detector.py)** 
+**[View script](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/src/detector.py)** 
 
 ---
 
@@ -176,9 +176,9 @@ plt.title("Suspicious Activity Heatmap (Alerts Over Time)")
 
 This visualization helps identify attack patterns and peak threat times.
 
-**[Read More...](https://leeannn01.github.io/visualiser/)**
+**[Read More...](https://leeannn01.github.io/cyber-portfolio/visualiser/)**
  
-**[View script](https://github.com/leeannn01/leeannn01.github.io/blob/main/projects/network-traffic-analysis-tool/src/visualiser.py)** 
+**[View script](https://github.com/leeannn01/cyber-portfolio/blob/main/projects/network-traffic-analysis-tool/src/visualiser.py)** 
 
 ---
 
