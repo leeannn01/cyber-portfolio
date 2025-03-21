@@ -46,45 +46,99 @@ def clean_dataframe(df, is_detector=False):
 
 def save_bar_chart(x, y, title, xlabel, ylabel, output_path, palette="Blues_r", rotate_xticks=False, legend_label=None):
     """Helper function to create and save a bar chart with a legend."""
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(16, 6))
     ax = sns.barplot(x=x, y=y, hue=x, palette=palette)
 
+    # Annotate each bar with its value
+    for p in ax.patches:
+        ax.annotate(
+            f"{int(p.get_height())}",  # Convert to integer to remove decimals
+            (p.get_x() + p.get_width() / 2, p.get_height()),  # Position at the top of the bar
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold"
+        )
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
     plt.grid(axis="y", linestyle="--", linewidth=0.5)
 
     if rotate_xticks:
-        plt.xticks(rotation=45)
+        plt.xticks(rotation=25, ha="right", fontsize=10, wrap=True) # Rotates and aligns text
 
     # Add legend if provided
     if legend_label:
-        plt.legend([legend_label], loc="best")
+        plt.legend([legend_label], loc='best')
 
-    plt.tight_layout()
+    plt.tight_layout()  # Adjusts space for legend
     plt.savefig(output_path, dpi=300)
     plt.close()
     print(f"- \033[1m{title}\033[0m saved to {output_path}")
 
 # Phase 1: Packet Flow + Alerts Timeline
+# # def visualise_packet_flow(analyser_df, detector_df, output_folder):
+#     """Generates a time-series visualization of normal and suspicious traffic."""
+#     plt.figure(figsize=(14, 7))
+#     sns.lineplot(data=analyser_df, x="time", y="length", label="Normal Traffic", linewidth=1.5, alpha=0.7)
+#     sns.scatterplot(data=detector_df, x="time", y="length", color='red', marker='x', s=50, label="Suspicious Traffic")
+#     plt.xlabel("Time")
+#     plt.ylabel("Packet Size (Bytes)")
+#     plt.title("Packet Flow with Suspicious Traffic Highlights")
+#     plt.grid(True, linestyle="--", linewidth=0.5)
+#     plt.legend(loc="best")
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+
+#     packet_flow_alerts_path = os.path.join(output_folder, "packet_flow_with_alerts.png")
+#     plt.savefig(packet_flow_alerts_path, dpi=300)
+#     plt.close()
+#     print(f"- \033[1mPacket Flow visualization\033[0m] saved to {packet_flow_alerts_path}")
+
 def visualise_packet_flow(analyser_df, detector_df, output_folder):
-    """Generates a time-series visualization of normal and suspicious traffic."""
+    """
+    Visualize normal vs malicious traffic trends over time.
+    Shows comparison with fallback to only normal traffic if detector data is empty.
+    """
+    # Convert time to datetime and floor to minute resolution
+    analyser_df['time'] = pd.to_datetime(analyser_df['time'], errors='coerce')
+    analyser_df = analyser_df.dropna(subset=['time'])
+    analyser_grouped = analyser_df.groupby(analyser_df['time'].dt.floor('min'))['length'].sum().reset_index(name='normal_length')
+
+    has_malicious = not detector_df.empty and 'length' in detector_df.columns and detector_df['length'].notna().any()
+
+    if has_malicious:
+        detector_df['time'] = pd.to_datetime(detector_df['time'], errors='coerce')
+        detector_df = detector_df.dropna(subset=['time'])
+        detector_grouped = detector_df.groupby(detector_df['time'].dt.floor('min'))['length'].sum().reset_index(name='malicious_length')
+        merged_df = pd.merge(analyser_grouped, detector_grouped, on='time', how='outer').fillna(0)
+    else:
+        merged_df = analyser_grouped.copy()
+        merged_df['malicious_length'] = 0
+
+    merged_df.sort_values('time', inplace=True)
+
+    # Plotting
     plt.figure(figsize=(14, 7))
-    sns.lineplot(data=analyser_df, x="time", y="length", label="Normal Traffic", linewidth=1.5, alpha=0.7)
-    sns.scatterplot(data=detector_df, x="time", y="length", color='red', marker='x', s=50, label="Suspicious Traffic")
+    sns.lineplot(data=merged_df, x='time', y='normal_length', label='Normal Traffic', linewidth=2)
+    if has_malicious:
+        sns.lineplot(data=merged_df, x='time', y='malicious_length', label='Malicious Traffic', linestyle='--', color='red')
+    else:
+        print("No malicious traffic detected. Plotting only normal traffic.")
+
     plt.xlabel("Time")
-    plt.ylabel("Packet Size (Bytes)")
-    plt.title("Packet Flow with Suspicious Traffic Highlights")
-    plt.grid(True, linestyle="--", linewidth=0.5)
-    plt.legend(loc="best")
+    plt.ylabel("Total Packet Size (Bytes)")
+    plt.title("Network Traffic Over Time")
+    plt.grid(True, linestyle='--', linewidth=0.5)
+    plt.legend(loc='best')  # Moves legend outside
     plt.xticks(rotation=45)
     plt.tight_layout()
 
-    packet_flow_alerts_path = os.path.join(output_folder, "packet_flow_with_alerts.png")
-    plt.savefig(packet_flow_alerts_path, dpi=300)
+    packet_flow_comparison = os.path.join(output_folder, "packet_flow_comparison.png")
+    plt.savefig(packet_flow_comparison, dpi=300)
     plt.close()
-    print(f"- \033[1mPacket Flow visualization\033[0m] saved to {packet_flow_alerts_path}")
-
+    print(f"\nPacket Flow Comparison Graph saved to {packet_flow_comparison}")
+          
 # Phase 2: Top Offending IPs
 def visualise_top_offending_ips(detector_df, output_folder, top_n=10):
     """Generates a bar chart of the top N most frequent offending IP addresses."""
@@ -113,10 +167,16 @@ def visualise_alert_type_distribution(detector_df, output_folder):
         print("\n\033[1;33mWarning:\033[0m No alert types found. Skipping Alert Type Distribution.")
         return
 
-    plt.figure(figsize=(8, 8))
-    plt.pie(alert_counts, labels=alert_counts.index, autopct="%1.1f%%", startangle=140, colors=sns.color_palette("Set3"))
+    plt.figure(figsize=(12, 8))  # Bigger figure size
+    plt.pie(alert_counts, 
+            labels=[""] * len(alert_counts),  # Creates empty labels (same length as data)
+            autopct="%1.1f%%",  # Removes percentage display inside slices
+            startangle=140, 
+            colors=sns.color_palette("Set3"),
+            )
+
     plt.title("Alert Type Distribution (Percentage)")
-    plt.legend(title="Alert Types", loc="best")
+    plt.legend(alert_counts.index,title="Alert Types", loc='best')
     plt.tight_layout()
     pie_chart_path = os.path.join(output_folder, "alert_type_distribution_pie.png")
     plt.savefig(pie_chart_path, dpi=300)
@@ -200,7 +260,7 @@ def visualise_communication_network(analyser_df, detector_df, output_folder):
         plt.Line2D([0], [0], color="purple", lw=2, label="Mixed Traffic (Normal & Suspicious)"),
         plt.Line2D([0], [0], marker="o", color="w", markerfacecolor="black", markersize=8, label=f"Total Nodes: {total_nodes}")
     ]
-    plt.legend(handles=legend_labels, loc="upper right")
+    plt.legend(handles=legend_labels, loc='best')
     plt.margins(0.1)
 
     # Save graph
@@ -226,7 +286,8 @@ def visualise_suspicious_activity_heatmap(detector_df, output_folder):
     plt.xlabel("Time")
     plt.ylabel("Alert Type")
     plt.title("Suspicious Activity Heatmap (Alerts Over Time)")
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=45, ha="right")  # Rotates time labels
+    plt.yticks(fontsize=10)  # Makes alert type readable
     plt.tight_layout()
 
     # Save heatmap

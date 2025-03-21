@@ -1,3 +1,13 @@
+"""
+- Hybrid AI (Rule-Based + Bayesian) → Detects both known and unknown threats.
+- Kalman Filtering → Reduces false positives and smooths anomaly detection.
+- Adaptive Thresholding (Modular Option) → Dynamically adjusts sensitivity.
+- Contextual Awareness (Modular Option) → Adds risk scoring for better threat intelligence.
+- Highly Modular → Simply enable/disable Adaptive Thresholding & Contextual Awareness as needed.
+
+✔ Performance Optimized → Works in real-time for live network analysis
+✔ Explainable AI (XAI) → Provides human-readable risk scores and justification
+"""
 import os
 import sys
 import pandas as pd
@@ -50,13 +60,24 @@ class AIDetector:
         """Apply Rule-Based Threat Detection, including SYN Flood & Loopback Traffic"""
         threat_reason = []
 
+        # Port Checks (Safe conversion)
+        try:
+            sport = int(float(packet.get("sport", -1)))
+            dport = int(float(packet.get("dport", -1)))
+            if sport in self.SUSPICIOUS_PORTS:
+                threat_reason.append("Suspicious Source Port")
+            if dport in self.SUSPICIOUS_PORTS:
+                threat_reason.append("Suspicious Destination Port")
+        except (ValueError, TypeError):
+            pass  # Invalid or missing port values
+
         # Large Packet Size (Possible Data Exfiltration)
         if packet["length"] > self.LARGE_PACKET_SIZE:
             threat_reason.append("Large Packet Size (Possible Data Exfiltration)")
 
-        # Suspicious Ports Usage
-        if int(packet["sport"]) in self.SUSPICIOUS_PORTS or int(packet["dport"]) in self.SUSPICIOUS_PORTS:
-            threat_reason.append("Suspicious Port Usage")
+        # # Suspicious Ports Usage
+        # if int(packet["sport"]) in self.SUSPICIOUS_PORTS or int(packet["dport"]) in self.SUSPICIOUS_PORTS:
+        #     threat_reason.append("Suspicious Port Usage")
 
         # Suspicious Payload
         if self.contains_suspicious_payload(packet.get("payload", "")):
@@ -93,7 +114,9 @@ class AIDetector:
 
     def detect_malicious_traffic(self, input_csv, output_folder):
         """Process CSV file, detect threats, and save results."""
-        df = pd.read_csv(input_csv)
+
+        with open(input_csv, "r", encoding="utf-8", errors="replace") as file:
+            df = pd.read_csv(file, engine="python", on_bad_lines="skip")
 
         if "payload" not in df.columns:
             df["payload"] = ""
@@ -109,15 +132,17 @@ class AIDetector:
         # Save results
         results_folder = os.path.join(output_folder, "Malicious_Traffic_Detected")
         os.makedirs(results_folder, exist_ok=True)
-        output_csv = os.path.join(results_folder, "malicious_traffic_ai.csv")
+
+        pcap_filename = os.path.splitext(os.path.basename(input_csv))[0].replace("packet_data_", "")
+        output_csv = os.path.join(results_folder, f"malicious_traffic_{pcap_filename}.csv")
 
         df.to_csv(output_csv, index=False)
         print(f"✅ AI Detector Analysis Complete. Results saved to {output_csv}")
 
 ### === MAIN EXECUTION === ###
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 3:
-        print("Usage: python ai_detector.py <input_csv> <output_folder>")
+        print("Usage: python3 ai_detector.py <input_csv> <output_folder>")
         sys.exit(1)
 
     input_csv = sys.argv[1]
@@ -125,3 +150,6 @@ if __name__ == "__main__":
     
     detector = AIDetector()
     detector.detect_malicious_traffic(input_csv, output_folder)
+    
+if __name__ == "__main__":
+    main()

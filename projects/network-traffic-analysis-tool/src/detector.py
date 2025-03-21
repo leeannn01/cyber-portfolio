@@ -154,7 +154,7 @@ def detect_malicious_traffic(input_csv, output_folder):
         
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python detector.py <input_csv> <output_folder>")
+        print("Usage: python3 detector.py <input_csv> <output_folder>")
         sys.exit(1)
 
     input_csv = sys.argv[1]

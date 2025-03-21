@@ -154,6 +154,11 @@ def extract_packet_data(pcap_file, output_folder):
     data = []
 
     for index, packet in enumerate(packets):
+
+        # See progress
+        if index % 100 == 0:
+            print(f"\nProcessed {index}/{total_packets} packets...")
+
         frame_number = index + 1  # Frames in Wireshark start from 1
         packet_info = {
             "time": datetime.utcfromtimestamp(float(packet.time)).strftime('%Y-%m-%d %H:%M:%S'),
@@ -245,7 +250,7 @@ def extract_packet_data(pcap_file, output_folder):
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python analyser.py <input_pcap> <output_folder>")
+        print("Usage: python3 analyser.py <input_pcap> <output_folder>")
         sys.exit(1)
 
     extract_packet_data(sys.argv[1], sys.argv[2])

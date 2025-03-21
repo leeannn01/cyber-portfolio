@@ -62,16 +62,12 @@ for INDEX in "${SELECTED_INDICES[@]}"; do
         fi
 
         # Run Detector
-        DETECTOR_OUTPUT=$(python3 "$SRC_DIR/detector.py" "$ANALYSER_CSV" "$PCAP_RESULT_CSV")
+        # DETECTOR_OUTPUT=$(python3 "$SRC_DIR/detector.py" "$ANALYSER_CSV" "$PCAP_RESULT_CSV")
+        DETECTOR_OUTPUT=$(python3 "$SRC_DIR/ai_detector.py" "$ANALYSER_CSV" "$PCAP_RESULT_CSV")
 
-        if echo "$DETECTOR_OUTPUT" | grep -q "Malicious traffic detected"; then
-            if [[ ! -f "$DETECTOR_CSV" ]]; then
-                echo "\n\033[1;31mERROR:\033[0m Suspicious traffic detected, but $DETECTOR_CSV is missing!"
+        if [[ ! -f "$DETECTOR_CSV" ]]; then
+            echo "\n\033[1;31mERROR:\033[0m Detector failed!,$DETECTOR_CSV not found!"
                 continue
-            fi
-        else
-            echo "\n\033[1;033mWARNING:\033[0m No malicious traffic detected. Skipping visualisation."
-            continue
         fi
         
         # Run Visualiser (without creating extra folder)
