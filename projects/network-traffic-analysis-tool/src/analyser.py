@@ -155,9 +155,9 @@ def extract_packet_data(pcap_file, output_folder):
 
     for index, packet in enumerate(packets):
 
-        # See progress
-        if index % 100 == 0:
-            print(f"\nProcessed {index}/{total_packets} packets...")
+        # # See progress
+        # if index % 100 == 0:
+        #     print(f"\nProcessed {index}/{total_packets} packets...")
 
         frame_number = index + 1  # Frames in Wireshark start from 1
         packet_info = {
@@ -242,7 +242,9 @@ def extract_packet_data(pcap_file, output_folder):
         data.append(packet_info)
 
     df = pd.DataFrame(data)
-    df.to_csv(output_csv, index=False)
+    # df.to_csv(output_csv, index=False)
+
+    df.to_csv(output_csv, index=False, escapechar='\\', quoting=csv.QUOTE_MINIMAL)
 
     print(f"\n\033[1mAnalysis complete.\033[0m Data saved to {output_csv}")
     print(f"\033[1mDetected Protocols: \033[0m{', '.join(sorted(detected_protocols))}")

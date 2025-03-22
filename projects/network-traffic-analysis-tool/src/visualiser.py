@@ -101,16 +101,16 @@ def visualise_packet_flow(analyser_df, detector_df, output_folder):
     Shows comparison with fallback to only normal traffic if detector data is empty.
     """
     # Convert time to datetime and floor to minute resolution
-    analyser_df['time'] = pd.to_datetime(analyser_df['time'], errors='coerce')
+    analyser_df['time'] = pd.to_datetime(analyser_df['time'], unit ='s', errors='coerce')
     analyser_df = analyser_df.dropna(subset=['time'])
-    analyser_grouped = analyser_df.groupby(analyser_df['time'].dt.floor('min'))['length'].sum().reset_index(name='normal_length')
+    analyser_grouped = analyser_df.groupby(analyser_df['time'].dt.floor('s'))['length'].sum().reset_index(name='normal_length')
 
     has_malicious = not detector_df.empty and 'length' in detector_df.columns and detector_df['length'].notna().any()
 
     if has_malicious:
-        detector_df['time'] = pd.to_datetime(detector_df['time'], errors='coerce')
+        detector_df['time'] = pd.to_datetime(detector_df['time'], unit = 's', errors='coerce')
         detector_df = detector_df.dropna(subset=['time'])
-        detector_grouped = detector_df.groupby(detector_df['time'].dt.floor('min'))['length'].sum().reset_index(name='malicious_length')
+        detector_grouped = detector_df.groupby(detector_df['time'].dt.floor('s'))['length'].sum().reset_index(name='malicious_length')
         merged_df = pd.merge(analyser_grouped, detector_grouped, on='time', how='outer').fillna(0)
     else:
         merged_df = analyser_grouped.copy()
