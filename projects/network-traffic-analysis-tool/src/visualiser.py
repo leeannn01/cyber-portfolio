@@ -26,6 +26,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import networkx as nx
 
+# ---------- Utility Functions ----------
 def safe_read_csv(file_path):
     """Reads a CSV file safely, handling encoding issues and skipping bad lines."""
     with open(file_path, "r", encoding="utf-8", errors="replace") as file:
@@ -38,8 +39,11 @@ def clean_dataframe(df, is_detector=False):
     df["sport"] = pd.to_numeric(df["sport"], errors="coerce")
     df["dport"] = pd.to_numeric(df["dport"], errors="coerce")
 
-    if is_detector and "suspicious_payload" in df.columns:
-        df["suspicious_payload"] = df["suspicious_payload"].astype(str).str.lower() == "true"
+    if is_detector:
+        if "suspicious_payload" in df.columns:
+            df["suspicious_payload"] = df["suspicious_payload"].astype(str).str.lower() == "true"
+        if "is_anomaly" in df.columns:
+            df["is_anomaly"] = df["is_anomaly"].astype(str).str.lower() == "true"
 
     df = df.dropna(subset=["time", "length"])
     return df
@@ -76,6 +80,24 @@ def save_bar_chart(x, y, title, xlabel, ylabel, output_path, palette="Blues_r", 
     plt.close()
     print(f"- \033[1m{title}\033[0m saved to {output_path}")
 
+def save_grouped_bar_chart(df_grouped, title, xlabel, ylabel, output_path, color_palette="coolwarm"):
+    """Helper function to save a grouped bar chart with annotations and clean layout."""
+    ax = df_grouped.plot(kind="bar", figsize=(16, 6), colormap=color_palette)
+
+    # Add value labels on top of each bar
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%d', label_type='edge', fontsize=10, fontweight='bold')
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.grid(axis="y", linestyle="--", linewidth=0.5)
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300)
+    plt.close()
+    print(f"- \033[1m{title}\033[0m saved to: {output_path}")
+
 # Phase 1: Packet Flow + Alerts Timeline
 # # def visualise_packet_flow(analyser_df, detector_df, output_folder):
 #     """Generates a time-series visualization of normal and suspicious traffic."""
@@ -95,54 +117,90 @@ def save_bar_chart(x, y, title, xlabel, ylabel, output_path, palette="Blues_r", 
 #     plt.close()
 #     print(f"- \033[1mPacket Flow visualization\033[0m] saved to {packet_flow_alerts_path}")
 
-def visualise_packet_flow(analyser_df, detector_df, output_folder):
-    """
-    Visualize normal vs malicious traffic trends over time.
-    Shows comparison with fallback to only normal traffic if detector data is empty.
-    """
-    # Convert time to datetime and floor to minute resolution
-    analyser_df['time'] = pd.to_datetime(analyser_df['time'], unit ='s', errors='coerce')
-    analyser_df = analyser_df.dropna(subset=['time'])
-    analyser_grouped = analyser_df.groupby(analyser_df['time'].dt.floor('s'))['length'].sum().reset_index(name='normal_length')
+# def visualise_packet_flow(analyser_df, detector_df, output_folder):
+#     """
+#     Visualize normal vs malicious traffic trends over time.
+#     Shows comparison with fallback to only normal traffic if detector data is empty.
+#     """
+#     # Convert time to datetime and floor to minute resolution
+#     analyser_df['time'] = pd.to_datetime(analyser_df['time'], unit ='s', errors='coerce')
+#     analyser_df = analyser_df.dropna(subset=['time'])
+#     analyser_grouped = analyser_df.groupby(analyser_df['time'].dt.floor('s'))['length'].sum().reset_index(name='normal_length')
 
-    has_malicious = not detector_df.empty and 'length' in detector_df.columns and detector_df['length'].notna().any()
+#     has_malicious = not detector_df.empty and 'length' in detector_df.columns and detector_df['length'].notna().any()
 
-    if has_malicious:
-        detector_df['time'] = pd.to_datetime(detector_df['time'], unit = 's', errors='coerce')
-        detector_df = detector_df.dropna(subset=['time'])
-        detector_grouped = detector_df.groupby(detector_df['time'].dt.floor('s'))['length'].sum().reset_index(name='malicious_length')
-        merged_df = pd.merge(analyser_grouped, detector_grouped, on='time', how='outer').fillna(0)
-    else:
-        merged_df = analyser_grouped.copy()
-        merged_df['malicious_length'] = 0
+#     if has_malicious:
+#         detector_df['time'] = pd.to_datetime(detector_df['time'], unit = 's', errors='coerce')
+#         detector_df = detector_df.dropna(subset=['time'])
+#         detector_grouped = detector_df.groupby(detector_df['time'].dt.floor('s'))['length'].sum().reset_index(name='malicious_length')
+#         merged_df = pd.merge(analyser_grouped, detector_grouped, on='time', how='outer').fillna(0)
+#     else:
+#         merged_df = analyser_grouped.copy()
+#         merged_df['malicious_length'] = 0
 
-    merged_df.sort_values('time', inplace=True)
+#     merged_df.sort_values('time', inplace=True)
+
+#     # Plotting
+#     plt.figure(figsize=(14, 7))
+#     sns.lineplot(data=merged_df, x='time', y='normal_length', label='Normal Traffic', linewidth=2)
+#     if has_malicious:
+#         sns.lineplot(data=merged_df, x='time', y='malicious_length', label='Malicious Traffic', linestyle='--', color='red')
+#     else:
+#         print("No malicious traffic detected. Plotting only normal traffic.")
+
+#     plt.xlabel("Time")
+#     plt.ylabel("Total Packet Size (Bytes)")
+#     plt.title("Network Traffic Over Time")
+#     plt.grid(True, linestyle='--', linewidth=0.5)
+#     plt.legend(loc='best')  # Moves legend outside
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+
+#     packet_flow_comparison = os.path.join(output_folder, "packet_flow_comparison.png")
+#     plt.savefig(packet_flow_comparison, dpi=300)
+#     plt.close()
+#     print(f"\nPacket Flow Comparison Graph saved to {packet_flow_comparison}")
+
+def visualise_packet_flow(df, output_folder):
+    """Plot all packet traffic and overlay rule-based, AI-based, and overlapping detections."""
+        
+    # Detection filters
+    rule_based = df[df["suspicious_reason"] != "Normal"]
+    ai_based = df[df["is_anomaly"] == True]
+    overlap = df[(df["suspicious_reason"] != "Normal") & (df["is_anomaly"] == True)]
 
     # Plotting
     plt.figure(figsize=(14, 7))
-    sns.lineplot(data=merged_df, x='time', y='normal_length', label='Normal Traffic', linewidth=2)
-    if has_malicious:
-        sns.lineplot(data=merged_df, x='time', y='malicious_length', label='Malicious Traffic', linestyle='--', color='red')
-    else:
-        print("No malicious traffic detected. Plotting only normal traffic.")
+    sns.lineplot(data=df, x="time", y="length", label="All Traffic", color="lightgray", linewidth=1.2, alpha=0.6)
 
+    if not rule_based.empty:
+        plt.scatter(rule_based["time"], rule_based["length"], color="orange", label="Rule-Based Detection", marker="x", s=50)
+
+    if not ai_based.empty:
+        plt.scatter(ai_based["time"], ai_based["length"], color="blue", label="AI-Based Detection", marker="^", s=50)
+
+    if not overlap.empty:
+        plt.scatter(overlap["time"], overlap["length"], color="red", label="Overlap (Both)", marker="*", s=100)
+
+    # Styling
     plt.xlabel("Time")
-    plt.ylabel("Total Packet Size (Bytes)")
-    plt.title("Network Traffic Over Time")
-    plt.grid(True, linestyle='--', linewidth=0.5)
-    plt.legend(loc='best')  # Moves legend outside
+    plt.ylabel("Packet Size (Bytes)")
+    plt.title("Network Traffic Over Time with Detection Markers")
+    plt.grid(True, linestyle="--", linewidth=0.5)
+    plt.legend(loc="best")
     plt.xticks(rotation=45)
     plt.tight_layout()
 
+    # Save output
     packet_flow_comparison = os.path.join(output_folder, "packet_flow_comparison.png")
     plt.savefig(packet_flow_comparison, dpi=300)
     plt.close()
-    print(f"\nPacket Flow Comparison Graph saved to {packet_flow_comparison}")
-          
+    print(f"\n- \033[1mPacket Flow Comparison Graph\033[0m saved to {packet_flow_comparison}")
+
 # Phase 2: Top Offending IPs
-def visualise_top_offending_ips(detector_df, output_folder, top_n=10):
+def visualise_top_offending_ips(df, output_folder, top_n=10):
     """Generates a bar chart of the top N most frequent offending IP addresses."""
-    top_offenders = detector_df["source"].value_counts().nlargest(top_n)
+    top_offenders = df["source"].value_counts().nlargest(top_n)
 
     if top_offenders.empty:
         print("\n\033[1;33mWarning:\033[0m No top offending IPs found. Skipping visualization.")
@@ -156,13 +214,13 @@ def visualise_top_offending_ips(detector_df, output_folder, top_n=10):
     )
 
 # Phase 3: Alert Type Distribution
-def visualise_alert_type_distribution(detector_df, output_folder):
+def visualise_alert_type_distribution(df, output_folder):
     """Generates a pie chart and a bar chart showing the distribution of alert types."""
-    if "suspicious_reason" not in detector_df.columns:
+    if "suspicious_reason" not in df.columns:
         print("\n\033[1;33mWarning:\033[0m No 'suspicious_reason' column found. Skipping Alert Type Distribution.")
         return
 
-    alert_counts = detector_df["suspicious_reason"].value_counts()
+    alert_counts = df["suspicious_reason"].value_counts()
     if alert_counts.empty:
         print("\n\033[1;33mWarning:\033[0m No alert types found. Skipping Alert Type Distribution.")
         return
@@ -191,103 +249,176 @@ def visualise_alert_type_distribution(detector_df, output_folder):
     )
 
 # Phase 4: Protocol Usage & Suspicious Activity
-def visualise_protocol_usage(analyser_df, detector_df, output_folder):
-    """Generates bar charts showing protocol usage in normal and suspicious activity."""
-    protocol_counts_normal = analyser_df["protocol"].value_counts()
-    protocol_counts_suspicious = detector_df["protocol"].value_counts()
+# def visualise_protocol_usage(analyser_df, detector_df, output_folder):
+#     """Generates bar charts showing protocol usage in normal and suspicious activity."""
+#     protocol_counts_normal = analyser_df["protocol"].value_counts()
+#     protocol_counts_suspicious = detector_df["protocol"].value_counts()
 
-    if protocol_counts_normal.empty and protocol_counts_suspicious.empty:
-        print("\n\033[1;33mWarning\033[0m: No protocol data found. Skipping Protocol Usage visualization.")
-        return
+#     if protocol_counts_normal.empty and protocol_counts_suspicious.empty:
+#         print("\n\033[1;33mWarning\033[0m: No protocol data found. Skipping Protocol Usage visualization.")
+#         return
 
-    if not protocol_counts_normal.empty:
-        save_bar_chart(
-            protocol_counts_normal.index, protocol_counts_normal.values, "Overall Protocol Distribution (Normal Traffic)",
-            "Protocol", "Number of Packets",
-            os.path.join(output_folder, "protocol_usage_normal.png"), "coolwarm",
-            rotate_xticks=True, legend_label="Normal Traffic"
-        )
+#     if not protocol_counts_normal.empty:
+#         save_bar_chart(
+#             protocol_counts_normal.index, protocol_counts_normal.values, "Overall Protocol Distribution (Normal Traffic)",
+#             "Protocol", "Number of Packets",
+#             os.path.join(output_folder, "protocol_usage_normal.png"), "coolwarm",
+#             rotate_xticks=True, legend_label="Normal Traffic"
+#         )
 
-    if not protocol_counts_suspicious.empty:
-        save_bar_chart(
-            protocol_counts_suspicious.index, protocol_counts_suspicious.values, "Suspicious Protocol Distribution (Alerted Traffic)",
-            "Protocol", "Number of Alerts",
-            os.path.join(output_folder, "protocol_usage_suspicious.png"), "Reds_r",
-            rotate_xticks=True, legend_label="Suspicious Traffic"
-        )
+#     if not protocol_counts_suspicious.empty:
+#         save_bar_chart(
+#             protocol_counts_suspicious.index, protocol_counts_suspicious.values, "Suspicious Protocol Distribution (Alerted Traffic)",
+#             "Protocol", "Number of Alerts",
+#             os.path.join(output_folder, "protocol_usage_suspicious.png"), "Reds_r",
+#             rotate_xticks=True, legend_label="Suspicious Traffic"
+#         )
+def visualise_protocol_usage(df, output_folder):
+    """Classifies packets and plots protocol usage comparison."""
+    df["is_anomaly"] = df["is_anomaly"].astype(bool)
+    df["is_suspicious"] = (df["suspicious_reason"] != "Normal") | df["is_anomaly"]
+    df["detection_type"] = df["is_suspicious"].map({True: "Suspicious", False: "Normal"})
+
+    # Group and count
+    grouped = df.groupby(["protocol", "detection_type"]).size().unstack(fill_value=0)
+
+    # Call the reusable chart function
+    save_grouped_bar_chart(
+        grouped,
+        title="Protocol Usage: Normal vs Suspicious",
+        xlabel="Protocol",
+        ylabel="Packet Count",
+        output_path=os.path.join(output_folder, "protocol_usage.png")
+    )
 
 # Phase 5: Communication Network Graph
-def visualise_communication_network(analyser_df, detector_df, output_folder):
-    """ Generates a communication network graph with total nodes count in title and legend. """
+# def visualise_communication_network(analyser_df, detector_df, output_folder):
+#     """ Generates a communication network graph with total nodes count in title and legend. """
+#     G = nx.DiGraph()
+
+#     # Extract normal and suspicious edges
+#     normal_edges = list(zip(analyser_df["source"], analyser_df["destination"]))
+#     suspicious_edges = list(zip(detector_df["source"], detector_df["destination"]))
+
+#     for src, dst in normal_edges:
+#         if pd.notna(src) and pd.notna(dst):
+#             G.add_edge(src, dst, color="blue", weight=0.5)  # Normal traffic
+
+#     for src, dst in suspicious_edges:
+#         if pd.notna(src) and pd.notna(dst):
+#             G.add_edge(src, dst, color="red", weight=2.0)  # Suspicious traffic
+
+#     # Define total node count
+#     total_nodes = len(G.nodes())
+
+#     # Generate layout
+#     plt.figure(figsize=(12, 8))
+#     pos = nx.spring_layout(G, k=0.5, seed=42)  # Spacing adjustment
+#     edge_colors = [G[u][v]["color"] for u, v in G.edges()]
+#     edge_weights = [G[u][v]["weight"] for u, v in G.edges()]
+#     node_sizes = [G.degree(n) * 100 for n in G.nodes()]
+
+#     nx.draw(G, pos, with_labels=False, node_size=node_sizes, edge_color=edge_colors, width=edge_weights, alpha=0.7, arrows=True)
+
+#     # Add labels for important nodes
+#     important_nodes = [n for n in G.nodes() if G.degree(n) > 3]
+#     labels = {n: n if n in important_nodes else "" for n in G.nodes()}
+#     nx.draw_networkx_labels(G, pos, labels=labels, font_size=8)
+
+#     # Update title with total nodes
+#     plt.title(f"Communication Network\nTotal Nodes: {total_nodes}", fontsize=14, fontweight="bold")
+
+#     # Update legend with total nodes count
+#     legend_labels = [
+#         plt.Line2D([0], [0], color="blue", lw=2, label="Normal Traffic"),
+#         plt.Line2D([0], [0], color="red", lw=2, label="Suspicious Traffic"),
+#         plt.Line2D([0], [0], color="purple", lw=2, label="Mixed Traffic (Normal & Suspicious)"),
+#         plt.Line2D([0], [0], marker="o", color="w", markerfacecolor="black", markersize=8, label=f"Total Nodes: {total_nodes}")
+#     ]
+#     plt.legend(handles=legend_labels, loc='best')
+#     plt.margins(0.1)
+
+#     # Save graph
+#     network_graph_path = os.path.join(output_folder, "communication_network.png")
+#     plt.savefig(network_graph_path, dpi=300)
+#     plt.close()
+#     print(f"- \033[1mCommunication Network Graph\033[0m saved to {network_graph_path}")
+    
+def visualise_communication_network(df, output_folder):
+    """Generates a communication network graph based on source-destination pairs with risk coloring."""
     G = nx.DiGraph()
 
-    # Extract normal and suspicious edges
-    normal_edges = list(zip(analyser_df["source"], analyser_df["destination"]))
-    suspicious_edges = list(zip(detector_df["source"], detector_df["destination"]))
+    # Classify edge risk
+    df["is_anomaly"] = df["is_anomaly"].astype(bool)
+    df["is_suspicious"] = (df["suspicious_reason"] != "Normal") | df["is_anomaly"]
 
-    for src, dst in normal_edges:
+    for _, row in df.iterrows():
+        src, dst = row["source"], row["destination"]
         if pd.notna(src) and pd.notna(dst):
-            G.add_edge(src, dst, color="blue", weight=0.5)  # Normal traffic
+            edge_color = "red" if row["is_suspicious"] else "blue"
+            edge_weight = 2.0 if row["is_suspicious"] else 0.5
+            G.add_edge(src, dst, color=edge_color, weight=edge_weight)
 
-    for src, dst in suspicious_edges:
-        if pd.notna(src) and pd.notna(dst):
-            G.add_edge(src, dst, color="red", weight=2.0)  # Suspicious traffic
-
-    # Define total node count
     total_nodes = len(G.nodes())
 
-    # Generate layout
+    # Draw graph
     plt.figure(figsize=(12, 8))
-    pos = nx.spring_layout(G, k=0.5, seed=42)  # Spacing adjustment
+    pos = nx.spring_layout(G, k=0.5, seed=42)
     edge_colors = [G[u][v]["color"] for u, v in G.edges()]
     edge_weights = [G[u][v]["weight"] for u, v in G.edges()]
     node_sizes = [G.degree(n) * 100 for n in G.nodes()]
 
-    nx.draw(G, pos, with_labels=False, node_size=node_sizes, edge_color=edge_colors, width=edge_weights, alpha=0.7, arrows=True)
+    nx.draw(G, pos, with_labels=False, node_size=node_sizes,
+            edge_color=edge_colors, width=edge_weights, alpha=0.7, arrows=True)
 
-    # Add labels for important nodes
-    important_nodes = [n for n in G.nodes() if G.degree(n) > 3]
-    labels = {n: n if n in important_nodes else "" for n in G.nodes()}
-    nx.draw_networkx_labels(G, pos, labels=labels, font_size=8)
+    # Label high-degree nodes
+    labels = {n: n for n in G.nodes() if G.degree(n) > 3}
+    nx.draw_networkx_labels(G, pos, labels, font_size=8)
 
-    # Update title with total nodes
+    # Title + legend
     plt.title(f"Communication Network\nTotal Nodes: {total_nodes}", fontsize=14, fontweight="bold")
-
-    # Update legend with total nodes count
     legend_labels = [
         plt.Line2D([0], [0], color="blue", lw=2, label="Normal Traffic"),
         plt.Line2D([0], [0], color="red", lw=2, label="Suspicious Traffic"),
-        plt.Line2D([0], [0], color="purple", lw=2, label="Mixed Traffic (Normal & Suspicious)"),
         plt.Line2D([0], [0], marker="o", color="w", markerfacecolor="black", markersize=8, label=f"Total Nodes: {total_nodes}")
     ]
     plt.legend(handles=legend_labels, loc='best')
     plt.margins(0.1)
 
-    # Save graph
+    # Save output
     network_graph_path = os.path.join(output_folder, "communication_network.png")
     plt.savefig(network_graph_path, dpi=300)
     plt.close()
-    print(f"- \033[1mCommunication Network Graph\033[0m saved to {network_graph_path}")
+    print(f"- \033[1mCommunication Network Graph\033[0m saved to: {network_graph_path}")
 
 # Phase 6: Suspicious Activity Heatmap
-def visualise_suspicious_activity_heatmap(detector_df, output_folder):
+def visualise_suspicious_activity_heatmap(df, output_folder):
     """ Generates a heatmap showing the intensity of suspicious activity over time. """
-    detector_df["time"] = pd.to_datetime(detector_df["time"], errors="coerce")
-    detector_df["time"] = detector_df["time"].dt.floor("min")  # Group by minute
+    df["time"] = pd.to_datetime(df["time"], errors="coerce")
+    df["time"] = df["time"].dt.floor("min")  # Group by minute
 
-    heatmap_data = detector_df.groupby(["time", "suspicious_reason"]).size().unstack(fill_value=0)
+    heatmap_data = df.groupby(["time", "suspicious_reason"]).size().unstack(fill_value=0)
 
     if heatmap_data.empty:
         print("\n\033[1;33mWarning:\033[0m No data for heatmap. Skipping visualization.")
         return
 
-    plt.figure(figsize=(12, 6))
-    sns.heatmap(heatmap_data.T, cmap="Reds", linewidths=0.5, linecolor="gray", annot=True, fmt="d")
-    plt.xlabel("Time")
-    plt.ylabel("Alert Type")
-    plt.title("Suspicious Activity Heatmap (Alerts Over Time)")
-    plt.xticks(rotation=45, ha="right")  # Rotates time labels
-    plt.yticks(fontsize=10)  # Makes alert type readable
+    plt.figure(figsize=(14, 7))
+    sns.heatmap(
+        heatmap_data.T,
+        cmap="Reds",
+        linewidths=0.5,
+        linecolor="gray",
+        annot=True,
+        fmt="d",
+        cbar_kws={"label": "Alert Count"}
+    )
+
+    plt.xlabel("Time", fontsize=12)
+    plt.ylabel("Alert Type", fontsize=12)
+    plt.xticks(rotation=30, ha="right", fontsize=10)
+    plt.yticks(fontsize=10)
+    plt.title("Suspicious Activity Heatmap (Alerts Over Time)", fontsize=14, fontweight='bold')
     plt.tight_layout()
 
     # Save heatmap
@@ -298,60 +429,62 @@ def visualise_suspicious_activity_heatmap(detector_df, output_folder):
 
 # Main Execution
 def main():
-    analyser_csv = sys.argv[1]
-    detector_csv = sys.argv[2]
-    output_folder= sys.argv[3]
+    # analyser_csv = sys.argv[1]
+    detector_csv = sys.argv[1]
+    output_folder= sys.argv[2]
     
     os.makedirs(output_folder, exist_ok=True)
     
     print(f"\nVisualizations will be saved to: {output_folder}")
     
     # Read CSVs
-    analyser_df = safe_read_csv(analyser_csv)
-    detector_df = safe_read_csv(detector_csv)
+    # analyser_df = safe_read_csv(analyser_csv)
+    df = safe_read_csv(detector_csv)
     
     # Ensure the CSVs exist before proceeding
-    if analyser_df is None or detector_df is None:
+    # if analyser_df is None or detector_df is None:
+    
+    if df is None:
         print("\n\033[1;31mERROR:\33[0m Missing required CSV files. Exiting.")
         return
 
     # Ensure necessary columns exist before cleaning
     required_columns = ["time", "length", "source", "destination"]
     for col in required_columns:
-        if col not in analyser_df.columns:
-            analyser_df[col] = "Unknown" if col in ["source", "destination"] else 0
-        if col not in detector_df.columns:
-            detector_df[col] = "Unknown" if col in ["source", "destination"] else 0
+        # if col not in analyser_df.columns:
+        #     analyser_df[col] = "Unknown" if col in ["source", "destination"] else 0
+        if col not in df.columns:
+            df[col] = "Unknown" if col in ["source", "destination"] else 0
 
     # Convert time column properly
     # Explicitly define the expected datetime format (to allow adjustment if required)
     expected_format = "%Y-%m-%d %H:%M:%S" 
 
-    analyser_df["time"] = pd.to_datetime(analyser_df["time"], format=expected_format, errors="coerce")
-    detector_df["time"] = pd.to_datetime(detector_df["time"], format=expected_format, errors="coerce")
+    # analyser_df["time"] = pd.to_datetime(analyser_df["time"], format=expected_format, errors="coerce")
+    df["time"] = pd.to_datetime(df["time"], format=expected_format, errors="coerce")
 
     # Drop rows with missing timestamps
-    analyser_df.dropna(subset=["time"], inplace=True)
-    detector_df.dropna(subset=["time"], inplace=True)
+    # analyser_df.dropna(subset=["time"], inplace=True)
+    df.dropna(subset=["time"], inplace=True)
 
     # Clean the DataFrames
-    analyser_df = clean_dataframe(analyser_df)
-    detector_df = clean_dataframe(detector_df, is_detector=True)
+    # analyser_df = clean_dataframe(analyser_df)
+    df = clean_dataframe(df, is_detector=True)
 
     # Ensure sorting happens after cleaning and valid timestamps
-    if not analyser_df.empty:
-        analyser_df.sort_values("time", inplace=True)
-    if not detector_df.empty:
-        detector_df.sort_values("time", inplace=True)
+    # if not analyser_df.empty:
+    #     analyser_df.sort_values("time", inplace=True)
+    if not df.empty:
+        df.sort_values("time", inplace=True)
     
 
     # Execute all visualization phases
-    visualise_packet_flow(analyser_df, detector_df, output_folder)
-    visualise_top_offending_ips(detector_df, output_folder)
-    visualise_alert_type_distribution(detector_df, output_folder)
-    visualise_protocol_usage(analyser_df, detector_df, output_folder)
-    visualise_communication_network(analyser_df, detector_df, output_folder)
-    visualise_suspicious_activity_heatmap(detector_df, output_folder) 
+    visualise_packet_flow(df, output_folder)
+    visualise_top_offending_ips(df, output_folder)
+    visualise_alert_type_distribution(df, output_folder)
+    visualise_protocol_usage(df, output_folder)
+    visualise_communication_network(df, output_folder)
+    visualise_suspicious_activity_heatmap(df, output_folder) 
       
     print(f"\nVisualiser output saved in {output_folder}")
 

@@ -7,6 +7,10 @@
 
 ✔ Performance Optimized → Works in real-time for live network analysis
 ✔ Explainable AI (XAI) → Provides human-readable risk scores and justification
+
+- suspicious_reason != "Normal" → Your trigger for rule-based detections
+- is_anomaly == True → Your AI model decision
+- visualize both, and especially highlight overlap (AND condition) or divergence (XOR conditions).
 """
 import os
 import sys
@@ -16,6 +20,22 @@ import numpy as np
 from collections import defaultdict
 from scipy.stats import norm
 
+# === Kalman Filter Class ===
+class KalmanFilter:
+    """Kalman Filter for Weighted Anomaly Score Refinement"""
+    def __init__(self, initial_estimate=0.1, process_variance=1e-4, measurement_variance=1e-1):
+        self.estimate = initial_estimate
+        self.variance = process_variance
+        self.measurement_variance = measurement_variance
+
+    def update(self, measurement):
+        """Apply Kalman update step"""
+        kalman_gain = self.variance / (self.variance + self.measurement_variance)
+        self.estimate = self.estimate + kalman_gain * (measurement - self.estimate)
+        self.variance = (1 - kalman_gain) * self.variance
+        return self.estimate
+
+# === AI Detector Class ===
 class AIDetector:
     """
     AI-Based Hybrid Threat Detection System
@@ -35,11 +55,17 @@ class AIDetector:
         ipaddress.ip_network("192.168.0.0/16")
     ]
 
-    def __init__(self):
-        """Initialize Adaptive Learning & SYN Flood Tracking"""
+    def __init__(self, use_adaptive_threshold=False):
+        """Initialize AI Detector with Rule-Based + Bayesian AI"""
         self.normal_traffic_mean = 500
         self.normal_traffic_std = 100
-        self.syn_packet_count = defaultdict(int)  # Track SYN flood per source
+        self.syn_packet_count = defaultdict(int)    # Track SYN flood per source
+        self.kalman_filter = KalmanFilter()         # Kalman filter
+        self.use_adaptive_threshold = use_adaptive_threshold         # Disabled Adaptivtive thresholding (optional)
+        self.previous_anomaly_scores = []  # Used for adaptive thresholding
+
+        # self.use_contextual_awareness = False       # Disabled contextual awareness (optional)
+        # self.known_malicious_ips = set()   # Used for contextual awareness
 
     def is_internal_ip(self, ip):
         """Check if an IP belongs to an internal network."""
@@ -75,10 +101,6 @@ class AIDetector:
         if packet["length"] > self.LARGE_PACKET_SIZE:
             threat_reason.append("Large Packet Size (Possible Data Exfiltration)")
 
-        # # Suspicious Ports Usage
-        # if int(packet["sport"]) in self.SUSPICIOUS_PORTS or int(packet["dport"]) in self.SUSPICIOUS_PORTS:
-        #     threat_reason.append("Suspicious Port Usage")
-
         # Suspicious Payload
         if self.contains_suspicious_payload(packet.get("payload", "")):
             threat_reason.append("Suspicious Payload Detected")
@@ -103,14 +125,28 @@ class AIDetector:
         """Compute Bayesian Probability for Anomalous Traffic."""
         normal_traffic = norm(loc=self.normal_traffic_mean, scale=self.normal_traffic_std)
         suspicious_traffic = norm(loc=2000, scale=500)
+        
         p_normal = normal_traffic.pdf(packet_size)
         p_suspicious = suspicious_traffic.pdf(packet_size)
-        return p_suspicious / (p_suspicious + p_normal)
+        
+        raw_anomaly_score = p_suspicious / (p_suspicious + p_normal)
+        refined_anomaly_score = self.kalman_filter.update(raw_anomaly_score)
 
-    def update_threshold(self, new_packet_size):
-        """Adaptively update the normal packet size threshold."""
-        self.normal_traffic_mean = (self.normal_traffic_mean + new_packet_size) / 2
-        self.normal_traffic_std = np.std([self.normal_traffic_mean, new_packet_size])
+        return refined_anomaly_score
+    
+    def compute_dynamic_threshold(self):
+        """Compute Adaptive Thresholding for Anomaly Detection"""
+        if len(self.previous_anomaly_scores) < 10:
+            return 0.7  # Default threshold
+
+        threshold_mean = np.mean(self.previous_anomaly_scores)
+        threshold_std = np.std(self.previous_anomaly_scores)
+        return threshold_mean + (1.5 * threshold_std)  
+      
+    # def update_threshold(self, new_packet_size):
+    #     """Adaptively update the normal packet size threshold."""
+    #     self.normal_traffic_mean = (self.normal_traffic_mean + new_packet_size) / 2
+    #     self.normal_traffic_std = np.std([self.normal_traffic_mean, new_packet_size])
 
     def detect_malicious_traffic(self, input_csv, output_folder):
         """Process CSV file, detect threats, and save results."""
@@ -126,8 +162,18 @@ class AIDetector:
         # Apply Hybrid AI Detection
         df["suspicious_reason"] = df.apply(self.detect_known_threats, axis=1)
         df["anomaly_score"] = df["length"].apply(self.compute_anomaly_score)
-        df["adaptive_threshold"] = df["length"].apply(self.update_threshold)
-        df["is_anomaly"] = df["anomaly_score"] > 0.7  # Flag anomalies with high probability
+        
+        # Mean adjustment
+        # df["adaptive_threshold"] = df["length"].apply(self.update_threshold)
+        # df["is_anomaly"] = df["anomaly_score"] > 0.7  # Flag anomalies with high probability
+
+        # Adaptive Threshold
+        if self.use_adaptive_threshold:
+            self.previous_anomaly_scores.extend(df["anomaly_score"].tolist())
+            dynamic_threshold = self.compute_dynamic_threshold()
+            df["is_anomaly"] = df["anomaly_score"] > dynamic_threshold
+        else:
+            df["is_anomaly"] = df["anomaly_score"] > 0.7
 
         # Save results
         results_folder = os.path.join(output_folder, "Malicious_Traffic_Detected")

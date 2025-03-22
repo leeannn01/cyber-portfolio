@@ -71,7 +71,8 @@ for INDEX in "${SELECTED_INDICES[@]}"; do
         fi
         
         # Run Visualiser (without creating extra folder)
-        python3 "$SRC_DIR/visualiser.py" "$ANALYSER_CSV" "$DETECTOR_CSV" "$VISUALS_FOLDER"
+        # python3 "$SRC_DIR/visualiser.py" "$ANALYSER_CSV" "$DETECTOR_CSV" "$VISUALS_FOLDER"
+        python3 "$SRC_DIR/visualiser.py" "$DETECTOR_CSV" "$VISUALS_FOLDER"
 
         echo "\n\033[1;32mCompleted processing: ${FILE##*/}\033[0m"
     else
