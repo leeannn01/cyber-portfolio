@@ -25,3 +25,7 @@ package-lock.json
 # Misc
 _sass/dist
 assets/js/dist
+projects/network-traffic-analysis-tool/data/test_1.pcap
+
+# Virtual env
+venv/
