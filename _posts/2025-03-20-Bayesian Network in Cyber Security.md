@@ -77,14 +77,14 @@ Where:
 
 ### Example: Detecting Malicious Traffic
 If:
-- \( P(\text{Anomaly}) = 0.02 \) (2%)
-- \( P(\text{High Packet Size} | \text{Anomaly}) = 0.85 \)
-- \( P(\text{High Packet Size}) = 0.10 \) (10%)
+- \( P({Anomaly}) = 0.02 \) (2%)
+- \( P({High Packet Size} | \{Anomaly}) = 0.85 \)
+- \( P({High Packet Size}) = 0.10 \) (10%)
 
 Then:
 
 \[
-P(\text{Anomaly} | \text{High Packet Size}) = \frac{0.85 \times 0.02}{0.10} = 0.17
+P({Anomaly} | {High Packet Size}) = \frac{0.85 \times 0.02}{0.10} = 0.17
 \]
 
 **Key Takeaway**: If a packet has unusually high packet size, there is a **17% probability** that it is part of anomalous/malicious traffic.
