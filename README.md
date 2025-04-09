@@ -36,19 +36,20 @@ cybersecurity-portfolio/
 │   ├── workflows/                          # Automated CI/CD build system
 │
 ├── projects/                               # Project details
-│   └── network-traffic-analysis-tool/  
-│       ├── README.md                       # Project write-up
-│       ├── src/                            # Python scripts for processing
-|       ├── scripts/                        # Bash scripts 
-|       ├── docs/                           # Documentation and reports
-|       ├── data/                           # Folder (PCAP files - from both web scrapping/downloaded)
-|       └── results/                        # All analysed results saved within 
-|           └── pcap1
-|               ├── downloads_pcap1/        # Downlable content within payload saved within 
-|               ├── payload_pcap1.txt       # Payload extracted
-|               ├── pcap1.csv               # Packet Data extracted
-|               ├── Malicious Traffic/      # Results from Detector saved within (a csv and text summary)
-|               └── Visuals/                # Results from Visualiser
+│   ├── network-traffic-analysis-tool/  
+│   |   ├── README.md                       # Project write-up
+│   |   ├── src/                            # Python scripts for processing
+|   |   ├── scripts/                        # Bash scripts 
+|   |   ├── docs/                           # Documentation and reports
+|   |   ├── data/                           # Folder (PCAP files - from both web scrapping/downloaded)
+|   |   └── results/                        # All analysed results saved within 
+|   |       └── pcap1
+|   |           ├── downloads_pcap1/        # Downlable content within payload saved within 
+|   |           ├── payload_pcap1.txt       # Payload extracted
+|   |           ├── pcap1.csv               # Packet Data extracted
+|   |           ├── Malicious Traffic/      # Results from Detector saved within (a csv and text summary)
+|   |           └── Visuals/                # Results from Visualiser
+│   └── ctf-challenges/  
 ├── .gitignore                              # Files to ignore in Git
 ├── Gemfile                                 # Jekyll dependencies
 ├── LICENSE                                 # Project license
@@ -66,12 +67,25 @@ A set of Python and Bash scripts for **capturing, analyzing, detecting, and visu
 - Detect suspicious patterns using Python-based anomaly detection.  
 - Visualize results using Matplotlib and Pandas.  
 
-**[View My Projects](./projects/network-traffic-analysis-tool/)** 
+**[View Network Traffic Analysis Tolkit](./projects/network-traffic-analysis-tool/)** 
+
+
+### **CTF Challenges**  
+**Description:**  
+A collection of code for various **web exploitation, reverse engineering, and network forensics** CTF challenges I’ve solved. This folder also includes source files and payloads referenced in my blog posts.
+
+**Reference Blog Posts:**  
+- [Quantum Scrambler – picoCTF Walkthrough](https://leeannn01.github.io/cyber-portfolio/posts/Quantum-Scrambler-picoCTF/)  
+- [SSTI 1 – picoCTF Walkthrough](https://leeannn01.github.io/cyber-portfolio/SSTI-1/)
+- [PIE TIMES - picoCTF Walkthrough](https://leeannn01.github.io/cyber-portfolio/pie-times/)
+
+**[Explore CTF Challenges](./projects/ctf-challenges/)**
+
+**[View My Projects](./projects/)** 
 
 ## Blog 
 **Description**
 This portfolio leveraged on a chirpy-starter template to generate the blog. 
-
 
 ### Usage and Installation
 **How to add a New Blog Post**
